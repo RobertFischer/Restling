@@ -14,3 +14,7 @@ hs_err_pid*
 .gradle
 
 ~*.swp
+
+*.iml
+*.ipr
+*.iws
