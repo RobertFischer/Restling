@@ -8,6 +8,8 @@ subprojects {
   assert restlingVersion : "Please provide a version for Restling (this project)"
   version = restlingVersion
 
+  sourceCompatibility = 8
+
   repositories {
     mavenLocal()
     jcenter()
@@ -19,9 +21,9 @@ subprojects {
   }
   dependencies {
     assert restletVersion : "Please provide a version for restlet"
-    compile "org.restlet.jee:org.restlet:$restletVersion"
-    ["jackson", "fileupload", "httpclient", "servlet", "net", "slf4j"].each { ext ->
-      compile "org.restlet.jee:org.restlet.ext.$ext:$restletVersion"
+    compile "org.restlet.jse:org.restlet:$restletVersion"
+    ["jackson", "fileupload", "httpclient", "net", "slf4j"].each { ext ->
+      compile "org.restlet.jse:org.restlet.ext.$ext:$restletVersion"
     }
 
     assert groovyVersion : "Please provide a version for Groovy"
