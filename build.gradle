@@ -22,7 +22,7 @@ subprojects {
   dependencies {
     assert restletVersion : "Please provide a version for restlet"
     compile "org.restlet.jse:org.restlet:$restletVersion"
-    ["jackson", "fileupload", "httpclient", "net", "slf4j"].each { ext ->
+    ["jackson", "fileupload", "httpclient", "slf4j"].each { ext ->
       compile "org.restlet.jse:org.restlet.ext.$ext:$restletVersion"
     }
 
