@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":restling-core")
+    compile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
+    testRuntime 'org.slf4j:slf4j-simple:[1.7.12,1.8)'
+}

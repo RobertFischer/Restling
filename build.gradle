@@ -1,37 +1,42 @@
 subprojects {
 
-  apply plugin:'java'
-  apply plugin:'groovy'
-  apply plugin:'maven'
+    apply plugin: 'java'
+    apply plugin: 'groovy'
+    apply plugin: 'maven'
 
-  group = 'com.smokejumperit.restling'
-  assert restlingVersion : "Please provide a version for Restling (this project)"
-  version = restlingVersion
+    group = 'com.smokejumperit.restling'
+    assert restlingVersion: "Please provide a version for Restling (this project)"
+    version = restlingVersion
 
-  sourceCompatibility = 8
+    sourceCompatibility = 8
 
-  repositories {
-    mavenLocal()
-    jcenter()
-    mavenCentral()
-    maven {
-      name = "Restlet Maven Repository"
-      url = "http://maven.restlet.com"
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+        maven {
+            name = "Restlet Maven Repository"
+            url = "http://maven.restlet.com"
+        }
     }
-  }
-  dependencies {
-    assert restletVersion : "Please provide a version for restlet"
-    compile "org.restlet.jse:org.restlet:$restletVersion"
-    ["jackson", "fileupload", "httpclient", "slf4j"].each { ext ->
-      compile "org.restlet.jse:org.restlet.ext.$ext:$restletVersion"
-    }
+    dependencies {
+        assert restletVersion: "Please provide a version for restlet"
+        compile "org.restlet.jse:org.restlet:$restletVersion"
+        ["jackson", "fileupload", "httpclient", "slf4j"].each { ext ->
+            compile "org.restlet.jse:org.restlet.ext.$ext:$restletVersion"
+        }
 
-    assert groovyVersion : "Please provide a version for Groovy"
-    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-  }
+        assert groovyVersion: "Please provide a version for Groovy"
+        compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+
+        compile 'javax.servlet:javax.servlet-api:[3.0.1,4)'
+
+        testCompile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
+        testCompile 'junit:junit:[4.12,5)'
+    }
 
 }
 
 allprojects {
-  apply plugin:'idea'
+    apply plugin: 'idea'
 }
