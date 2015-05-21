@@ -13,10 +13,12 @@ hs_err_pid*
 
 .gradle
 
-~*.swp
+.*.swp
 
 *.iml
 *.ipr
 *.iws
 
 */build
+
+build

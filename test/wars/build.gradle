@@ -1,0 +1,15 @@
+subprojects { subproject ->
+
+  System.out.println("Applying template configuration for $subproject.name")
+
+  subproject.apply plugin:'war'
+
+  subproject.group = "restling.test.wars"
+
+  subproject.dependencies {
+    compile project(":restling-core")
+  }
+
+}
+
+

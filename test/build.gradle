@@ -1,5 +1,28 @@
+group = "resting.test"
+
+def my = project
+
 dependencies {
-    compile project(":restling-core")
-    compile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
-    testRuntime 'org.slf4j:slf4j-simple:[1.7.12,1.8)'
+  compile project(":restling-core")
+  compile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
+  testRuntime 'org.slf4j:slf4j-simple:[1.7.12,1.8)'
 }
+
+project(":restling-test:wars").subprojects { subproject ->
+  System.out.println("Registering war attachment to $subproject")
+  def testTask = my.tasks.test
+  subproject.tasks.withType(War) { task ->
+    System.out.println("Registering war task from $subproject onto $testTask")
+    testTask.dependsOn(task)
+    task.doLast {
+      System.out.println("Copying ${task} outputs to the $my testing resources directory")
+      task.outputs.files.each { warFile ->
+        my.copy {
+          from zipTree(warFile)
+          into "src/test/wars/${subproject.name}"
+        }
+      }
+    }
+  }
+}
+

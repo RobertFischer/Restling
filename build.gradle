@@ -4,7 +4,7 @@ subprojects {
     apply plugin: 'groovy'
     apply plugin: 'maven'
 
-    group = 'com.smokejumperit.restling'
+    group = 'restling'
     assert restlingVersion: "Please provide a version for Restling (this project)"
     version = restlingVersion
 
