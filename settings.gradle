@@ -1,7 +1,7 @@
 include 'core', 'test', 'test:wars'
 
 new File(rootDir, "test/wars").eachDir { dir ->
-  if(dir.name == "build") return
+  if(dir.name in ["build", "src"]) return
   System.out.println("Including $dir")
   include "test:wars:$dir.name"
 }

@@ -27,13 +27,14 @@ class TestingServletContainer {
         server = new Server(port)
         WebAppContext context = new WebAppContext()
         context.with {
-            resourceBase = warDir
+            resourceBase = warDir.root.absolutePath
             descriptor = warDir.webXml
             configurations = [
                     new WebXmlConfiguration(),
                     new WebInfConfiguration(),
                     new MetaInfConfiguration(),
-                    new FragmentConfiguration()
+                    new FragmentConfiguration(),
+                    new JettyWebXmlConfiguration()
             ] as Configuration[]
             contextPath = "/"
             parentLoaderPriority = true

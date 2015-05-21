@@ -28,19 +28,19 @@ class WarDir {
         assert root: "Please specify the root of the unpacked WAR (was null) "
 
         this.root = root
-        assert root.exists(): "Root of war ($root) does not exist"
-        assert root.directory: "Root of war ($root) is not a directory"
+        assert root.exists(): "Root of war ($root.absolutePath) does not exist"
+        assert root.directory: "Root of war ($root.absolutePath) is not a directory"
 
-        assert webInf.exists(): "WEB-INF ($webInf) does not exist"
-        assert webInf.directory: "WEB-INF ($webInf) is not a directory"
+        assert webInf.exists(): "WEB-INF ($webInf.absolutePath) does not exist"
+        assert webInf.directory: "WEB-INF ($webInf.absolutePath) is not a directory"
 
-        assert webXml.exists(): "web.xml ($webXml) does not exist"
-        assert webXml.file: "web.xml ($webXml) is not a regular file"
+        assert webXml.exists(): "web.xml ($webXml.absolutePath) does not exist"
+        assert webXml.file: "web.xml ($webXml.absolutePath) is not a regular file"
     }
 
     @CompileStatic
     void delete() {
-        if (!root.deleteDir()) throw new IOException("Could not delete the directory $root")
+        if (!root.deleteDir()) throw new IOException("Could not delete the directory $root.absolutePath")
     }
 
     static WarDir createTemporaryWarDir() {

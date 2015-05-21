@@ -1,6 +1,7 @@
 group = "resting.test"
 
 def my = project
+def testTask = my.tasks.test
 
 dependencies {
   compile project(":restling-core")
@@ -10,16 +11,20 @@ dependencies {
 
 project(":restling-test:wars").subprojects { subproject ->
   System.out.println("Registering war attachment to $subproject")
-  def testTask = my.tasks.test
   subproject.tasks.withType(War) { task ->
     System.out.println("Registering war task from $subproject onto $testTask")
+    def destinationDirectory = "src/test/wars/${subproject.name}"
+
     testTask.dependsOn(task)
+    testTask.inputs.dir destinationDirectory
+
+    task.inputs.dir destinationDirectory
     task.doLast {
-      System.out.println("Copying ${task} outputs to the $my testing resources directory")
+      System.out.println("Copying ${task} outputs to the $my testing resources directory: $destinationDirectory")
       task.outputs.files.each { warFile ->
         my.copy {
           from zipTree(warFile)
-          into "src/test/wars/${subproject.name}"
+          into destinationDirectory
         }
       }
     }
