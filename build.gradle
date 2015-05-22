@@ -21,9 +21,9 @@ subprojects {
     }
     dependencies {
         assert restletVersion: "Please provide a version for restlet"
-        compile "org.restlet.jse:org.restlet:$restletVersion"
-        ["jackson", "fileupload", "httpclient", "slf4j"].each { ext ->
-            compile "org.restlet.jse:org.restlet.ext.$ext:$restletVersion"
+        compile "org.restlet.jee:org.restlet:$restletVersion"
+        ["jackson", "servlet", "fileupload", "httpclient", "slf4j"].each { ext ->
+            compile "org.restlet.jee:org.restlet.ext.$ext:$restletVersion"
         }
 
         assert groovyVersion: "Please provide a version for Groovy"
