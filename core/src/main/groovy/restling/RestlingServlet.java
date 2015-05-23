@@ -3,11 +3,10 @@ package restling;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.restlet.Application;
-import org.restlet.Restlet;
 import org.restlet.ext.servlet.ServletAdapter;
-import org.restlet.routing.Router;
+import restling.guice.RestlingApplicationModule;
 import restling.guice.RestlingModule;
+import restling.restlet.RestlingApplication;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -19,17 +18,17 @@ import java.util.*;
 
 /**
  * This is the servlet that you will put in your {@code web.xml} file. It will look
- * for your application's Guice module using {@link #getApplicationModule(ServletConfig)},
- * and then it will use that annotation to fetch an instance of the {@link Application} type
- * annotated with {@link InboundRoot}. That instance will be the Restlet that all requests
- * are routed into.
+ * for your application's Guice module using {@link #getApplicationModuleClass(ServletConfig)},
+ * and then it will use that module to construct an instance of the {@link RestlingApplication}.
+ * That instance will be the Restlet that all requests are routed into.
  */
 public class RestlingServlet extends javax.servlet.http.HttpServlet {
 
   private ServletAdapter adapter;
 
   /**
-   * Performs the bulk of the work.
+   * Performs the bulk of the work, including creating the {@link RestlingApplication}
+   * and wiring it into the servlet.
    *
    * @param config The configuration used to configure the servlet; may not be {@code null}
    * @throws ServletException If something goes wrong
@@ -39,18 +38,25 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
     super.init(config);
 
     this.adapter = new ServletAdapter(getServletContext());
-    RestlingApplication application = new RestlingApplication(adapter.getContext());
-    Module applicationModule = getApplicationModule(config);
-    Injector injector = Guice.createInjector(
-                                                new RestlingModule(application),
-                                                applicationModule
-    );
-    application.setInboundRootProvider(injector.getProvider(Router.class));
+    Module restlingModule = new RestlingModule(this.adapter.getContext(), getApplicationModuleClass(getServletConfig()));
+    Injector injector = Guice.createInjector(restlingModule);
+    Module applicationModule = injector.getInstance(RestlingApplicationModule.class);
+    injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection
+    RestlingApplication application = injector.getInstance(RestlingApplication.class);
     this.adapter.setNext(application);
   }
 
   /**
-   * Delegates servicing to to the retrieved {@link Restlet} (the one annotated with {@link InboundRoot}).
+   * Undoes the work that was done in {@link #init(ServletConfig)}, so that we clean up after ourselves.
+   */
+  @Override
+  public void destroy() {
+    this.adapter = null;
+    super.destroy();
+  }
+
+  /**
+   * Delegates servicing to to the retrieved {@link RestlingApplication}.
    */
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -69,7 +75,7 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
    * @return The Guice module for the application; may not be {@code null}
    * @throws ServletException If we were unable to construct the Guice module for the application
    */
-  public Module getApplicationModule(ServletConfig config) throws ServletException {
+  public Class<? extends RestlingApplicationModule> getApplicationModuleClass(ServletConfig config) throws ServletException {
     Objects.requireNonNull(config, "ServletConfig");
     String moduleName = config.getInitParameter("guice-module");
     if (moduleName == null || moduleName.isEmpty()) {
@@ -77,26 +83,11 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
                                      "(should be the class name of the application Guice module)");
     }
     try {
-      return instantiateModule((Class<Module>) getServletContext().getClassLoader().loadClass(moduleName));
+      return (Class<? extends RestlingApplicationModule>) getServletContext().getClassLoader().loadClass(moduleName);
     } catch (Exception e) {
-      throw new ServletException("Could not instantiate Guice module from: " + moduleName, e);
+      throw new ServletException("Could not specify RestlingApplicationModule: " + moduleName, e);
     }
   }
 
-  /**
-   * Responsible for returning a {@link Module} given a class name for it. Currently, this
-   * just calls {@link Class#newInstance()}, but future versions may provide more broad support.
-   *
-   * @param toInstantiate The class to instantiate; may not be {@code null}.
-   * @return The instantiated module.
-   */
-  public Module instantiateModule(Class<Module> toInstantiate) throws ServletException {
-    Objects.requireNonNull(toInstantiate, "class to instantiate");
-    try {
-      return toInstantiate.newInstance();
-    } catch (Exception e) {
-      throw new ServletException("Could not instantiate Guice module from " + toInstantiate, e);
-    }
-  }
 
 }

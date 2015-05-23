@@ -2,10 +2,9 @@ package restling.guice
 
 import com.google.inject.Binder
 import com.google.inject.Module
+import com.google.inject.Singleton
 import groovy.transform.CompileStatic
-import org.restlet.Application
 import org.restlet.Context
-import restling.RestlingApplication
 
 /**
  * The Guice module responsible for wiring together the Restling infrastructure.
@@ -13,10 +12,14 @@ import restling.RestlingApplication
 @CompileStatic
 class RestlingModule implements Module {
 
-    RestlingApplication application
+    final Context context
+    final Class<? extends RestlingApplicationModule> applicationModule
 
-    RestlingModule(RestlingApplication application) {
-        this.application = application
+    RestlingModule(Context context, Class<? extends RestlingApplicationModule> applicationModule) {
+        assert context: "Please provide a context for ${this.class}"
+        this.context = context
+        assert applicationModule: "Please specify an application module class for ${this.class}"
+        this.applicationModule = applicationModule
     }
 
     /**
@@ -29,10 +32,10 @@ class RestlingModule implements Module {
 
     @Override
     void configure(Binder binder) {
-        assert application: "Please provide an application before executing the binding"
-        binder.bind(RestlingApplication).toInstance(application)
-        binder.bind(Application).toInstance(application)
-        binder.bind(Context).toInstance(application.context)
+        binder.with {
+            bind(Context).toInstance(context)
+            bind(RestlingApplicationModule).to(applicationModule).in(Singleton)
+        }
     }
 
 }
