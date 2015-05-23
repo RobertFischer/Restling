@@ -18,7 +18,7 @@ Define a class extending `RestlingApplicationModule` in your war. This class sig
 and it also exposes the key optional hooks for Guice injection. The primary things you will have to define are:
 
   * A `RestlingRouter`, which extends the [Restlet Router](http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris),
-    and tells
+    and tells the Restling application how to direct traffic.
   * Any Guice configuration for its dependency injection.
 
 Let's say you call your application module `com.foo.BarModule`.  Given that, create your `web.xml` like this:
