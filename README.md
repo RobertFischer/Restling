@@ -11,6 +11,15 @@ configuration, and that requires understanding of how to best do that configurat
 Restling groups together Groovy, Restlet, and Guice to create a smoother development experience for REST APIs. More importantly, it takes away the rough edges
 from deploying Restlet in the way you almost certainly want to deploy it.
 
+Advantages
+--------------
+
+  * You get to use Restlet as a servlet without having to wire things together yourself.
+  * You get to use Guice's type-safe dependency injection and gets its awesome error messages for your all your {@code ServerResource} instances.
+  * You get to use Groovy's wonderfully succinct syntax for coding up those {@code ServerResource} instances.
+  * Various sane configurations are now the defaults, such as:
+    * Assuming you want to respond with JSON unless there is a file suffix specified
+
 Usage
 ---------------
 

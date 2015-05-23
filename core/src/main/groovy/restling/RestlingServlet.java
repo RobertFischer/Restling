@@ -7,6 +7,7 @@ import org.restlet.ext.servlet.ServletAdapter;
 import restling.guice.RestlingApplicationModule;
 import restling.guice.RestlingModule;
 import restling.restlet.RestlingApplication;
+import restling.restling.servlet.PreferJsonHttpServletRequest;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -56,11 +57,23 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
   }
 
   /**
-   * Delegates servicing to to the retrieved {@link RestlingApplication}.
+   * Delegates servicing to to the retrieved {@link RestlingApplication} after applying any necessary
+   * wrappers.
    */
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    req = preferJson(req);
     this.adapter.service(req, resp);
+  }
+
+  /**
+   * Wraps the given request in a facade that will prefer JSON if there is no file extension.
+   *
+   * @param req The request to wrap
+   * @return Either the original request or a wrapper around the original request
+   */
+  protected HttpServletRequest preferJson(HttpServletRequest req) {
+    return PreferJsonHttpServletRequest.wrap(req);
   }
 
   /**
