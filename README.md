@@ -14,15 +14,14 @@ from deploying Restlet in the way you almost certainly want to deploy it.
 Usage
 ---------------
 
-Define your applications's [Guice module](https://github.com/google/guice/wiki/GettingStarted) as a class in your war. Let's say you call it `com.foo.BarModule`.
-This module should provide the following keys:
+Define a class extending `RestlingApplicationModule` in your war. This class signature specifies all the configuration that you need to provide for Restling,
+and it also exposes the key optional hooks for Guice injection. The primary things you will have to define are:
 
-  * A [Restlet Router](http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris) that will be used as the
-    inbound root for the
-    [Restlet Application](http://restlet.com/technical-resources/restlet-framework/javadocs/3.0/jee/api/org/restlet/Application.html?is-external=true)
-    (ie: where all the calls from clients will be routed to).
+  * A `RestlingRouter`, which extends the [Restlet Router](http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris),
+    and tells
+  * Any Guice configuration for its dependency injection.
 
-Once you have that, create your `web.xml` like this:
+Let's say you call your application module `com.foo.BarModule`.  Given that, create your `web.xml` like this:
 
 ```xml
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
@@ -39,18 +38,38 @@ Once you have that, create your `web.xml` like this:
   </servlet>
   <servlet-mapping>
     <servlet-name>restling</servlet-name>
-    <url-pattern><!-- This empty url-pattern will match the context where the webapp is mounted --></url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
 ```
 
 Then war it up, being sure to including the Restling library and its dependencies in your war. Now deploy and enjoy!
 
+Application Module Protip
+---------------------------
+
+Groovy makes the application module source much nicer, especially if you use the
+[`@CompileStatic`](http://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html) annotation to retain Guice's very useful type constraints:
+you then get the best of Groovy's dynamism and Guice's type safety!
+
+Also, the [Groovy `with` method](http://mrhaki.blogspot.com/2009/09/groovy-goodness-with-method.html)
+is really handy for working with the `binder` argument in your application module:
+
+```groovy
+    @Override
+    void configureCustomBindings(Binder binder) {
+        binder.with {
+          bindConstant().annotatedWith(Names.named("message")).to("Hello, World!")
+          bind(MyClass)
+        }
+    }
+```
+
 Examples
 -----------
 
 Examples (which are used as tests in the framework, and therefore guaranteed to actually work and be up-to-date) are in `./test/wars`. See the `README.md` files
-in each directory for details.
+in each directory for details. The `basic-injection` example war is a good example of a minimal configuration with injection used on a server resource.
 
 FAQ
 -------
