@@ -15,10 +15,12 @@ Advantages
 --------------
 
   * You get to use Restlet as a servlet without having to wire things together yourself.
-  * You get to use Guice's type-safe dependency injection and gets its awesome error messages for your all your {@code ServerResource} instances.
-  * You get to use Groovy's wonderfully succinct syntax for coding up those {@code ServerResource} instances.
+  * You get to use Guice's type-safe dependency injection (with its awesome error handling) for your all your `ServerResource` instances.
+  * You get to use Groovy's wonderfully succinct syntax for coding up those `ServerResource` instances.
   * Various sane configurations are now the defaults, such as:
-    * Assuming you want to respond with JSON unless there is a file suffix specified
+    * A strong preference for JSON. If there is no other specific type requested, respond with JSON.
+    * Use file extensions (eg: `.json`, `.xml`) to determine what file type is desired.
+    * Data conversion configuration which is more secure, more what you want by default, and more extensible.
 
 Usage
 ---------------
@@ -83,4 +85,5 @@ in each directory for details. The `basic-injection` example war is a good examp
 FAQ
 -------
 
-  * *What if I want to have multiple modules?* Have your application module call `binder.install(module)` ([API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
+  * *What if I want to have multiple modules?* <br />Have your application module call `binder.install(module)` ([API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
+  * *How do I change the JSON/XML marshalling rules?* <br />Define the binding with the key `@UserConfiguration ObjectMapper` and it will be used instead of the Restling default implementation. The Restling default implementation is bound under `@RestlingDefault ObjectMapper`.
