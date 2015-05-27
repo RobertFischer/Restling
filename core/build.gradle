@@ -1,4 +1,53 @@
+plugins {
+  id "com.jfrog.bintray" version "1.2"
+}
+
 dependencies {
   compile "com.google.inject:guice:[4.0,5)"
   testCompile project(":restling-test")
 }
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+configurations { published }
+artifacts {
+  published sourceJar
+  published javadocJar
+}
+
+bintray { // See https://github.com/bintray/gradle-bintray-plugin
+  user = System.env.BINTRAY_USER
+  key = System.env.BINTRAY_API_KEY
+
+  publish = true
+
+  configurations = ['published', 'archives']
+
+  pkg {
+    repo = "maven"
+    name = "restling"
+    version {
+      name = restlingVersion
+    }
+    desc = "An API development platform using Guice, Restlet, and Groovy"
+    def githubUrl = "https://github.com/RobertFischer/Restling"
+    websiteUrl = githubUrl
+    issueTrackerUrl = "$githubUrl/issues"
+    vcsUrl = "${githubUrl}.git"
+    licenses = ["Unlicense"]
+    labels = ["rest", "groovy", "guice", "restlet"]
+    publicDownloadNumbers = true
+  }
+
+}
+
+tasks.bintrayUpload.dependsOn(
+  tasks.install, tasks.javadocJar, tasks.sourceJar
+)

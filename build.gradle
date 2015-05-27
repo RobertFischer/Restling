@@ -1,75 +1,49 @@
-plugins {
-    id "com.jfrog.bintray" version "1.2"
-}
-bintray { // See https://github.com/bintray/gradle-bintray-plugin
-  user = System.env.BINTRAY_USER
-  key = System.env.BINTRAY_API_KEY
+allprojects {
+  apply plugin: 'idea'
 
-  publish = true
-
-  pkg {
-    repo = "maven"
-    name = "restling"
-    version {
-      name = restlingVersion
-    }
-    desc = "An API development platform using Guice, Restlet, and Groovy"
-    def githubUrl = "https://github.com/RobertFischer/Restling"
-    websiteUrl = githubUrl
-    issueTrackerUrl = "$githubUrl/issues"
-    vcsUrl = "${githubUrl}.git"
-    licenses = ["Unlicense"]
-    labels = ["rest", "groovy", "guice", "restlet"]
-    publicDownloadNumbers = true
-  }
-
+  group = 'restling'
+  assert restlingVersion: "Please provide a version for Restling (this project)"
+  version = restlingVersion
 }
 
 subprojects {
+  apply plugin: 'java'
+  apply plugin: 'groovy'
+  apply plugin: 'maven'
 
-    apply plugin: 'java'
-    apply plugin: 'groovy'
-    apply plugin: 'maven'
+  sourceCompatibility = 8
+  targetCompatibility = 8
 
-    group = 'restling'
-    assert restlingVersion: "Please provide a version for Restling (this project)"
-    version = restlingVersion
-
-    sourceCompatibility = 8
-    targetCompatibility = 8
-
-    repositories {
-        mavenLocal()
-        jcenter()
-        mavenCentral()
-        maven {
-            name = "Restlet Maven Repository"
-            url = "http://maven.restlet.com"
-        }
+  repositories {
+      mavenLocal()
+      jcenter()
+      mavenCentral()
+      maven {
+          name = "Restlet Maven Repository"
+          url = "http://maven.restlet.com"
+      }
+  }
+  dependencies {
+    assert restletVersion: "Please provide a version for restlet"
+    compile "org.restlet.jee:org.restlet:$restletVersion"
+    ["jackson", "servlet", "fileupload", "httpclient", "slf4j"].each { ext ->
+      compile "org.restlet.jee:org.restlet.ext.$ext:$restletVersion"
     }
-    dependencies {
-        assert restletVersion: "Please provide a version for restlet"
-        compile "org.restlet.jee:org.restlet:$restletVersion"
-        ["jackson", "servlet", "fileupload", "httpclient", "slf4j"].each { ext ->
-            compile "org.restlet.jee:org.restlet.ext.$ext:$restletVersion"
-        }
 
-        // 2.5 is the current version as of right now, and org.restlet.ext.jackson is behind
-        ["core", "databind", "annotations"].each { ext ->
-            compile "com.fasterxml.jackson.core:jackson-$ext:[2.5.3,2.6)"
-        }
-
-        assert groovyVersion: "Please provide a version for Groovy"
-        compile "org.codehaus.groovy:groovy-all:$groovyVersion"
-
-        compile 'javax.servlet:javax.servlet-api:[3.0.1,4)'
-
-        testCompile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
-        testCompile 'junit:junit:[4.12,5)'
+    // 2.5 is the current version as of right now, and org.restlet.ext.jackson is behind
+    ["core", "databind", "annotations"].each { ext ->
+      compile "com.fasterxml.jackson.core:jackson-$ext:[2.5.3,2.6)"
     }
+
+    assert groovyVersion: "Please provide a version for Groovy"
+    compile "org.codehaus.groovy:groovy-all:$groovyVersion"
+
+    compile 'javax.servlet:javax.servlet-api:[3.0.1,4)'
+
+    testCompile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
+    testCompile 'junit:junit:[4.12,5)'
+  }
+
 
 }
 
-allprojects {
-    apply plugin: 'idea'
-}
