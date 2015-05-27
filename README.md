@@ -86,4 +86,4 @@ FAQ
 -------
 
   * *What if I want to have multiple modules?* <br />Have your application module call `binder.install(module)` ([API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
-  * *How do I change the JSON/XML marshalling rules?* <br />Define the binding with the key `@UserConfiguration ObjectMapper` and it will be used instead of the Restling default implementation. The Restling default implementation is bound under `@RestlingDefault ObjectMapper`.
+  * *How do I change the JSON/XML marshalling rules?* <br />Define the binding for the `ObjectMapper` type and it will be used instead of the Restling default implementation. The Restling default implementation is bound under `@RestlingDefault ObjectMapper`.
