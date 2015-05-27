@@ -26,6 +26,7 @@ class RestlingApplication extends Application {
     @Inject
     RestlingApplication(Context context) {
         super(context)
+        tunnelService.extensionsTunnel = true
     }
 
     @Override

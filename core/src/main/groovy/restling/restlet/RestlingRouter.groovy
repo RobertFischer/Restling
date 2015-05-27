@@ -14,11 +14,8 @@ import org.restlet.routing.Router
 @CompileStatic
 abstract class RestlingRouter extends Router {
 
-    /**
-     * The injector that will be used to create resource classes.
-     */
     @Inject
-    Injector injector;
+    Injector injector
 
     @Inject
     RestlingRouter(Context context) {
@@ -38,7 +35,7 @@ abstract class RestlingRouter extends Router {
      */
     @Override
     Finder createFinder(Class<? extends ServerResource> resourceClass) {
-        assert injector: "Need an injector in order to create the finder!"
+        assert injector: "Need an injector to create the finder!"
         return new RestlingFinder(context, resourceClass, injector)
     }
 

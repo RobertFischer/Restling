@@ -1,16 +1,22 @@
 package restling.guice
 
-import com.google.inject.Binder
-import com.google.inject.Module
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.inject.AbstractModule
+import com.google.inject.Injector
+import com.google.inject.Key
 import com.google.inject.Singleton
 import groovy.transform.CompileStatic
 import org.restlet.Context
+import restling.guice.providers.DefaultedProvider
+import restling.guice.providers.ObjectMapperProvider
+
+import javax.inject.Provider
 
 /**
  * The Guice module responsible for wiring together the Restling infrastructure.
  */
 @CompileStatic
-class RestlingModule implements Module {
+class RestlingModule extends AbstractModule {
 
     final Context context
     final Class<? extends RestlingApplicationModule> applicationModule
@@ -22,20 +28,17 @@ class RestlingModule implements Module {
         this.applicationModule = applicationModule
     }
 
-    /**
-     * Contributes bindings and other configurations for this module to {@code binder}.
-     *
-     * <p><strong>Do not invoke this method directly</strong> to install submodules. Instead use
-     * {@link Binder#install(Module)}, which ensures that provider methods are
-     * discovered.
-     */
-
     @Override
-    void configure(Binder binder) {
-        binder.with {
-            bind(Context).toInstance(context)
-            bind(RestlingApplicationModule).to(applicationModule).in(Singleton)
-        }
+    void configure() {
+        bind(Context).toInstance(context)
+        bind(RestlingApplicationModule).to(applicationModule).in(Singleton)
+        configureDefaultedBinding(ObjectMapper, ObjectMapperProvider)
+    }
+
+    public <T> void configureDefaultedBinding(Class<T> target, Class<Provider<T>> defaultProviderClass) {
+        bind(Key.get(target, RestlingDefault)).toProvider(defaultProviderClass)
+        bind(target).toProvider(new DefaultedProvider(target, getProvider(Injector)))
+
     }
 
 }

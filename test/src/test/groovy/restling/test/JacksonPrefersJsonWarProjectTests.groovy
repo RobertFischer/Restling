@@ -25,5 +25,25 @@ class JacksonPrefersJsonWarProjectTests extends WarProjectTests {
         assert text == "{\"hello\":true}"
     }
 
+    @Test
+    void retrieveResourceJson() {
+        URL url = new URL("http://localhost:$server.port/foos.json")
+        assert url
+        assert url.protocol == "http"
+        assert url.port == server.port
+        String text = url.text.trim()
+        assert text == "{\"hello\":true}"
+    }
+
+    @Test
+    void retrieveResourceXml() {
+        URL url = new URL("http://localhost:$server.port/foos.xml")
+        assert url
+        assert url.protocol == "http"
+        assert url.port == server.port
+        String text = url.text.trim()
+        assert text == "<LinkedHashMap><hello>true</hello></LinkedHashMap>"
+    }
+
 
 }

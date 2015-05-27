@@ -3,11 +3,15 @@ package restling;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.data.MediaType;
+import org.restlet.data.Preference;
 import org.restlet.ext.servlet.ServletAdapter;
+import org.restlet.routing.Filter;
 import restling.guice.RestlingApplicationModule;
 import restling.guice.RestlingModule;
 import restling.restlet.RestlingApplication;
-import restling.restling.servlet.PreferJsonHttpServletRequest;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -16,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * This is the servlet that you will put in your {@code web.xml} file. It will look
@@ -38,13 +43,23 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
 
+    // Construct the servlet adapter that we are going to use
     this.adapter = new ServletAdapter(getServletContext());
+
+    // Construct a filter to make JSON our preferred mode of communication
+    // Derived from http://stackoverflow.com/a/30427532/27561
+    final Filter preferencesFilter = new Filter(this.adapter.getContext()) {
+
+    };
+    this.adapter.setNext(preferencesFilter);
+
+    // Construct the application
     Module restlingModule = new RestlingModule(this.adapter.getContext(), getApplicationModuleClass(getServletConfig()));
     Injector injector = Guice.createInjector(restlingModule);
     Module applicationModule = injector.getInstance(RestlingApplicationModule.class);
-    injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection
+    injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection tests
     RestlingApplication application = injector.getInstance(RestlingApplication.class);
-    this.adapter.setNext(application);
+    preferencesFilter.setNext(application);
   }
 
   /**
@@ -62,18 +77,7 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
    */
   @Override
   protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    req = preferJson(req);
     this.adapter.service(req, resp);
-  }
-
-  /**
-   * Wraps the given request in a facade that will prefer JSON if there is no file extension.
-   *
-   * @param req The request to wrap
-   * @return Either the original request or a wrapper around the original request
-   */
-  protected HttpServletRequest preferJson(HttpServletRequest req) {
-    return PreferJsonHttpServletRequest.wrap(req);
   }
 
   /**
