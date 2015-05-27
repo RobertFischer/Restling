@@ -2,6 +2,7 @@ package restling.test
 
 import groovy.transform.CompileStatic
 import org.junit.Test
+import restling.guice.providers.ObjectMapperProvider
 
 @CompileStatic
 class JacksonPrefersJsonWarProjectTests extends WarProjectTests {
@@ -22,7 +23,12 @@ class JacksonPrefersJsonWarProjectTests extends WarProjectTests {
         assert url.protocol == "http"
         assert url.port == server.port
         String text = url.text.trim()
-        assert text == "{\"hello\":true}"
+
+        assert text.startsWith("{")
+        assert text.endsWith("}")
+
+        def result = new ObjectMapperProvider().get().reader(Map).readValue(text)
+        assert [hello: true] == result
     }
 
     @Test
@@ -32,7 +38,12 @@ class JacksonPrefersJsonWarProjectTests extends WarProjectTests {
         assert url.protocol == "http"
         assert url.port == server.port
         String text = url.text.trim()
-        assert text == "{\"hello\":true}"
+
+        assert text.startsWith("{")
+        assert text.endsWith("}")
+
+        def result = new ObjectMapperProvider().get().reader(Map).readValue(text)
+        assert [hello: true] == result
     }
 
     @Test

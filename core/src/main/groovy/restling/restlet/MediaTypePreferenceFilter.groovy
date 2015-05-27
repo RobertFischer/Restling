@@ -59,12 +59,12 @@ class MediaTypePreferenceFilter extends Filter {
             // If we have something containing JSON, but not JSON itself, make JSON slightly more preferred
             boolean hasJson = acceptedMediaTypes.any { it.metadata == MediaType.APPLICATION_JSON }
             if (!hasJson) {
-                Float allQuality = acceptedMediaTypes.findAll({
-                    it.metadata.includes(MediaType.APPLICATION_JSON)
-                })?.collect({ it.quality })?.max()
-                if (allQuality) {
+                def mediaTypes = acceptedMediaTypes.findAll { it.metadata.includes(MediaType.APPLICATION_JSON) }
+                def qualities = mediaTypes*.quality
+                if (qualities && !qualities.isEmpty()) {
+                    float maxQuality = qualities.max()
                     log.fine("Saw something containing JSON, but not JSON itself: inserting stronger preference for JSON");
-                    float jsonQuality = Math.min(1.0f, allQuality * 1.1f);
+                    float jsonQuality = Math.min(1.0f, maxQuality * 1.1f);
                     acceptedMediaTypes.add(new Preference<MediaType>(MediaType.APPLICATION_JSON, jsonQuality));
                 }
             }

@@ -2,15 +2,12 @@ package restling.guice
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.AbstractModule
-import com.google.inject.Injector
-import com.google.inject.Key
 import com.google.inject.Singleton
 import groovy.transform.CompileStatic
 import org.restlet.Context
-import restling.guice.providers.DefaultedProvider
+import org.restlet.ext.jackson.JacksonConverter
+import restling.guice.providers.JacksonConverterProvider
 import restling.guice.providers.ObjectMapperProvider
-
-import javax.inject.Provider
 
 /**
  * The Guice module responsible for wiring together the Restling infrastructure.
@@ -32,13 +29,8 @@ class RestlingModule extends AbstractModule {
     void configure() {
         bind(Context).toInstance(context)
         bind(RestlingApplicationModule).to(applicationModule).in(Singleton)
-        configureDefaultedBinding(ObjectMapper, ObjectMapperProvider)
-    }
-
-    public <T> void configureDefaultedBinding(Class<T> target, Class<Provider<T>> defaultProviderClass) {
-        bind(Key.get(target, RestlingDefault)).toProvider(defaultProviderClass)
-        bind(target).toProvider(new DefaultedProvider(target, getProvider(Injector)))
-
+        bind(ObjectMapper).toProvider(ObjectMapperProvider)
+        bind(JacksonConverter).toProvider(JacksonConverterProvider)
     }
 
 }
