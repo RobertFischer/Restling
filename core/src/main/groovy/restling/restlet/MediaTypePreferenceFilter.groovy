@@ -8,6 +8,7 @@ import org.restlet.data.MediaType
 import org.restlet.data.Preference
 import org.restlet.routing.Filter
 
+// Derived from http://stackoverflow.com/a/30427532/27561
 /**
  * A Restlet {@link Filter} that sets the REST API preference for talking JSON, and falling back to XML. It will try
  * to do other types if they really insist.

@@ -3,14 +3,10 @@ package restling;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.MediaType;
-import org.restlet.data.Preference;
 import org.restlet.ext.servlet.ServletAdapter;
-import org.restlet.routing.Filter;
 import restling.guice.RestlingApplicationModule;
 import restling.guice.RestlingModule;
+import restling.restlet.MediaTypePreferenceFilter;
 import restling.restlet.RestlingApplication;
 
 import javax.servlet.ServletConfig;
@@ -20,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.*;
 
 /**
  * This is the servlet that you will put in your {@code web.xml} file. It will look
@@ -47,14 +42,11 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
     this.adapter = new ServletAdapter(getServletContext());
 
     // Construct a filter to make JSON our preferred mode of communication
-    // Derived from http://stackoverflow.com/a/30427532/27561
-    final Filter preferencesFilter = new Filter(this.adapter.getContext()) {
-
-    };
+    MediaTypePreferenceFilter preferencesFilter = new MediaTypePreferenceFilter(this.adapter.getContext());
     this.adapter.setNext(preferencesFilter);
 
     // Construct the application
-    Module restlingModule = new RestlingModule(this.adapter.getContext(), getApplicationModuleClass(getServletConfig()));
+    Module restlingModule = new RestlingModule(preferencesFilter.getContext(), getApplicationModuleClass(getServletConfig()));
     Injector injector = Guice.createInjector(restlingModule);
     Module applicationModule = injector.getInstance(RestlingApplicationModule.class);
     injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection tests
