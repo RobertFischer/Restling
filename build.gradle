@@ -9,6 +9,7 @@ subprojects {
     version = restlingVersion
 
     sourceCompatibility = 8
+    targetCompatibility = 8
 
     repositories {
         mavenLocal()
@@ -24,6 +25,11 @@ subprojects {
         compile "org.restlet.jee:org.restlet:$restletVersion"
         ["jackson", "servlet", "fileupload", "httpclient", "slf4j"].each { ext ->
             compile "org.restlet.jee:org.restlet.ext.$ext:$restletVersion"
+        }
+
+        // 2.5 is the current version as of right now, and org.restlet.ext.jackson is behind
+        ["core", "databind", "annotations"].each { ext ->
+            compile "com.fasterxml.jackson.core:jackson-$ext:[2.5.3,2.6)"
         }
 
         assert groovyVersion: "Please provide a version for Groovy"
