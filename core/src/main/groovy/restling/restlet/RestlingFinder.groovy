@@ -7,7 +7,7 @@ import org.restlet.Request
 import org.restlet.Response
 import org.restlet.resource.Finder
 import org.restlet.resource.ServerResource
-import restling.guice.RequestResponseModule
+import restling.guice.modules.RequestResponseModule
 import restling.guice.modules.RequestModule
 
 /**

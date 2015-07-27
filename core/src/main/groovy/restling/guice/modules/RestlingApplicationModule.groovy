@@ -66,7 +66,7 @@ abstract class RestlingApplicationModule extends AbstractModule {
 
     /**
      * Hook to provide a {@link com.google.inject.Module} that is loaded on a per-request basis, beyond
-     * the {@link restling.guice.RequestResponseModule}.
+     * the {@link RequestResponseModule}.
      *
      * @return The module loaded per request; by default, {@link RequestModule}
      */
