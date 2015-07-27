@@ -1,4 +1,4 @@
-package restling.guice
+package restling.guice.modules
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.AbstractModule

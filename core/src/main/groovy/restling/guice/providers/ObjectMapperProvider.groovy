@@ -7,6 +7,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.guava.GuavaModule
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule
 import com.google.inject.Provider
 import groovy.transform.CompileStatic
 
@@ -19,6 +24,19 @@ class ObjectMapperProvider implements Provider<ObjectMapper> {
     @Override
     ObjectMapper get() {
         def om = new ObjectMapper()
+
+        // Enable JDK8 support
+        def jdk8 = new Jdk8Module()
+        jdk8.configureAbsentsAsNulls(true)
+        om.registerModule(jdk8) // https://github.com/FasterXML/jackson-datatype-jdk8
+        om.registerModule(new JavaTimeModule()) // https://github.com/FasterXML/jackson-datatype-jsr310
+        om.registerModule(new ParameterNamesModule()); // https://github.com/FasterXML/jackson-module-parameter-names
+
+        // Enable Third-Party library support
+        om.registerModule(new JodaModule())
+        def guava = new GuavaModule()
+        guava.configureAbsentsAsNulls(true)
+        om.registerModule(guava)
 
         // Safety checks
         om.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
@@ -48,8 +66,9 @@ class ObjectMapperProvider implements Provider<ObjectMapper> {
         om.disable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)
         om.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS)
 
-        // Don't mess with the timezones
+        // Handle timezones in a sane way
         om.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+        om.enable(SerializationFeature.WRITE_DATES_WITH_ZONE_ID);
 
         // Return properties alphabetically for readers' convenience
         om.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)

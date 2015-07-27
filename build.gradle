@@ -31,8 +31,14 @@ subprojects {
     }
 
     // 2.5 is the current version as of right now, and org.restlet.ext.jackson is behind
-    ["core", "databind", "annotations"].each { ext ->
-      compile "com.fasterxml.jackson.core:jackson-$ext:[2.5.3,2.6)"
+    [
+      core: ["core", "databind", "annotations"],
+      datatype: ["datatype-jdk8", "datatype-jsr310", "datatype-guava", "datatype-joda"],
+      module: ["module-parameter-names"]
+    ].each { pkg, exts ->
+      exts.each { ext ->
+        compile "com.fasterxml.jackson.$pkg:jackson-$ext:[2.6.0,2.7)"
+      }
     }
 
     assert groovyVersion: "Please provide a version for Groovy"
@@ -40,8 +46,11 @@ subprojects {
 
     compile 'javax.servlet:javax.servlet-api:[3.0.1,4)'
 
+    compile "com.google.guava:guava:[18.0,19)"
+
     testCompile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
     testCompile 'junit:junit:[4.12,5)'
+    testCompile "org.slf4j:slf4j-simple:[1.7.12,1.8)"
   }
 
 

@@ -21,6 +21,7 @@ Advantages
     * A strong preference for JSON. If there is no other specific type requested, respond with JSON.
     * Use file extensions (eg: `.json`, `.xml`) to determine what file type is desired.
     * Data conversion configuration which is more secure, more what you want by default, and more extensible.
+    * The JSON serialization support you want: JDK8 types (including `Optional`), Guava Collection types, and Joda types.
 
 Usage
 ---------------
@@ -30,7 +31,7 @@ and it also exposes the key optional hooks for Guice injection. The primary thin
 
   * A `RestlingRouter`, which extends the [Restlet Router](http://restlet.com/technical-resources/restlet-framework/guide/2.3/core/routing/hierarchical-uris),
     and tells the Restling application how to direct traffic.
-  * Any Guice configuration for its dependency injection.
+  * A Guice configuration extending `RestlingApplicationModule` for its dependency injection.
 
 Let's say you call your application module `com.foo.BarModule`.  Given that, create your `web.xml` like this:
 
@@ -55,6 +56,13 @@ Let's say you call your application module `com.foo.BarModule`.  Given that, cre
 ```
 
 Then war it up, being sure to including the Restling library and its dependencies in your war. Now deploy and enjoy!
+
+Extended Usage Tips
+--------------------
+
+[Jackson's parameter name deserialization](https://github.com/FasterXML/jackson-module-parameter-names) is insanely helpful. It's really what you want:
+if you give parameter names to your class's constructor, they are mapped to field names, which enables you to have `final` fields (among other awesomeness).
+In order to use it, however, you need to pass `-parameters` to your project's `javac` compiler. Consult your build system documentation for how to do this.
 
 Application Module Protip
 ---------------------------

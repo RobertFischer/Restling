@@ -2,7 +2,7 @@ package simplest
 
 import com.google.inject.Binder
 import groovy.transform.CompileStatic
-import restling.guice.RestlingApplicationModule
+import restling.guice.modules.RestlingApplicationModule
 
 @CompileStatic
 class ApplicationModule extends RestlingApplicationModule {

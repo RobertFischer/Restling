@@ -50,23 +50,18 @@ class RestlingApplication extends Application {
     void replaceConverter(
             Class<? extends ConverterHelper> converterClass,
             ConverterHelper newConverter) {
+        // Get the registered converters
+        List<ConverterHelper> converters = Engine.instance.registeredConverters
 
         // Remove the old
-        ConverterHelper oldConverter = null;
-        List<ConverterHelper> converters = Engine.instance.registeredConverters
-        for (ConverterHelper converter : converters) {
-            if (converter.class == converterClass) {
-                converters.remove(converter);
-                oldConverter = converter;
-                break;
-            }
-        }
+        def oldConverter = converterService.find { converterClass == it.class }
+        if (oldConverter) converters.remove(oldConverter)
 
         // Add the new
         converters.add(newConverter);
 
         // Let people know what just happened
-        if (oldConverter == null) {
+        if (!oldConverter) {
             logger.info(String.format("Added {} to Restlet Engine", newConverter.getClass()));
         } else {
             logger.info(String.format("Replaced {} with {} in Restlet Engine", oldConverter.getClass(), newConverter.getClass()));

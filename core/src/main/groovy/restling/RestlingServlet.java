@@ -4,8 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import org.restlet.ext.servlet.ServletAdapter;
-import restling.guice.RestlingApplicationModule;
-import restling.guice.RestlingModule;
+import restling.guice.modules.RestlingApplicationModule;
+import restling.guice.modules.RestlingModule;
 import restling.restlet.MediaTypePreferenceFilter;
 import restling.restlet.RestlingApplication;
 
