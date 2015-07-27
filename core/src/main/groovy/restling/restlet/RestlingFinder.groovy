@@ -7,8 +7,8 @@ import org.restlet.Request
 import org.restlet.Response
 import org.restlet.resource.Finder
 import org.restlet.resource.ServerResource
-import restling.guice.modules.RequestResponseModule
 import restling.guice.modules.RequestModule
+import restling.guice.modules.RequestResponseModule
 
 /**
  * Uses a Guice {@link Injector} to instantiate the target class on demand.
@@ -36,8 +36,9 @@ class RestlingFinder extends Finder {
      */
     @Override
     ServerResource find(Request request, Response response) {
-        def requestModule = injector.getInstance(RequestModule)
-        return injector.createChildInjector(new RequestResponseModule(request, response), requestModule).getInstance(targetClass)
+        Injector requestInjector = injector.createChildInjector(new RequestResponseModule(request, response))
+        requestInjector = requestInjector.createChildInjector(requestInjector.getInstance(RequestModule))
+        return requestInjector.getInstance(targetClass)
     }
 
 }
