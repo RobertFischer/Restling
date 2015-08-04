@@ -5,6 +5,7 @@ import com.google.inject.Provider
 import groovy.transform.CompileStatic
 import org.restlet.Application
 import org.restlet.Context
+import org.restlet.Restlet
 import org.restlet.engine.Engine
 import org.restlet.engine.converter.ConverterHelper
 import org.restlet.ext.jackson.JacksonConverter
@@ -34,12 +35,17 @@ class RestlingApplication extends Application {
     }
 
     @Override
-    RestlingRouter createInboundRoot() {
+    Restlet createInboundRoot() {
+        // Create the user's inbound root
         assert inboundRootProvider: "please provide an inboundRootProvider"
-        RestlingRouter router = inboundRootProvider.get()
+        def router = inboundRootProvider.get()
         assert router: "the inbound root provider returned null"
         router.init()
-        return router
+
+        // Preface the inbound root with the version router
+        def versionRouter = new RestlingVersionRouter(context, router)
+
+        return versionRouter
     }
 
     // From http://restlet-discuss.1400322.n2.nabble.com/Jackson-Mix-in-Annotations-td6211060.html#a6231831

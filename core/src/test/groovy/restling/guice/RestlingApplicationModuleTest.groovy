@@ -3,12 +3,11 @@ package restling.guice
 import com.google.inject.Binder
 import com.google.inject.Guice
 import com.google.inject.Inject
+import com.google.inject.Injector
 import groovy.transform.CompileStatic
 import org.junit.Test
 import org.restlet.Context
-import org.restlet.ext.jackson.JacksonConverter
 import restling.guice.modules.RestlingApplicationModule
-import restling.restlet.RestlingJacksonConverter
 import restling.restlet.RestlingRouter
 
 @CompileStatic
@@ -42,17 +41,11 @@ class RestlingApplicationModuleTest {
          * @param binder The binding object; never {@code null}
          */
         @Override
-        void configureCustomBindings(Binder binder) {
+        void configureCustomBindings() {
             assert !customBindingsConfigured: "Custom bindings already configured"
             customBindingsConfigured = true
         }
 
-        /**
-         * Hook to provide the {@link RestlingRouter} implementation to use for your application.
-         * This class will be used for handling incoming requests to your Restling application.
-         *
-         * @return The class that will be used for routing
-         */
         @Override
         Class<? extends RestlingRouter> getRouterClass() {
             return DoNothingRestlingRouter
@@ -60,10 +53,9 @@ class RestlingApplicationModuleTest {
     }
 
     @Test
-    void constructJacksonConverter() {
-        def fixture = new BasicRestlingApplicationModule()
-        def jax = Guice.createInjector(fixture).getInstance(JacksonConverter)
-        assert jax instanceof RestlingJacksonConverter
+    void smoketest() {
+        Guice.createInjector(new BasicRestlingApplicationModule()).getInstance(Injector)
     }
+
 
 }

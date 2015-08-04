@@ -13,6 +13,6 @@ class ApplicationModule extends RestlingApplicationModule {
      * Does nothing.
      */
     @Override
-    void configureCustomBindings(Binder binder) {}
+    void configureCustomBindings() {}
 
 }

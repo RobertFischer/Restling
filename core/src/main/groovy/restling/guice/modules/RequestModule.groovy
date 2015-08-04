@@ -2,6 +2,7 @@ package restling.guice.modules
 
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
+import com.google.inject.Injector
 import com.google.inject.Module
 import groovy.transform.CompileStatic
 import org.restlet.Request
@@ -21,6 +22,9 @@ class RequestModule extends AbstractModule {
 
     @Inject
     Response response
+
+    @Inject
+    Injector parentInjector
 
     /**
      * Perform the context configuration for this request. By default, this method does nothing.

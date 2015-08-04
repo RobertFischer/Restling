@@ -11,6 +11,6 @@ class ApplicationModule extends RestlingApplicationModule {
     Class<ApplicationRouter> routerClass = ApplicationRouter
 
     @Override
-    void configureCustomBindings(Binder binder) {
+    void configureCustomBindings() {
     }
 }

@@ -11,7 +11,7 @@ class ApplicationModule extends RestlingApplicationModule {
     Class<ApplicationRouter> routerClass = ApplicationRouter
 
     @Override
-    void configureCustomBindings(Binder binder) {
-        binder.bindConstant().annotatedWith(Names.named("message")).to("Hello, World!")
+    void configureCustomBindings() {
+        bindConstant().annotatedWith(Names.named("message")).to("Hello, World!")
     }
 }

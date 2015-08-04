@@ -16,12 +16,12 @@ subprojects {
 
   repositories {
       mavenLocal()
-      jcenter()
       mavenCentral()
       maven {
           name = "Restlet Maven Repository"
           url = "http://maven.restlet.com"
       }
+      jcenter()
   }
   dependencies {
     assert restletVersion: "Please provide a version for restlet"

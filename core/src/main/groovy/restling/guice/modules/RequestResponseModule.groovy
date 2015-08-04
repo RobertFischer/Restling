@@ -1,5 +1,6 @@
 package restling.guice.modules
 
+import com.google.inject.AbstractModule
 import com.google.inject.Binder
 import com.google.inject.Module
 import groovy.transform.CompileStatic
@@ -12,7 +13,7 @@ import org.restlet.Response
  */
 @TupleConstructor
 @CompileStatic
-class RequestResponseModule implements Module {
+class RequestResponseModule extends AbstractModule {
 
     Request request
     Response response
@@ -25,10 +26,8 @@ class RequestResponseModule implements Module {
      * discovered.
      */
     @Override
-    void configure(Binder binder) {
-        binder.with {
-            bind(Request).toInstance(request)
-            bind(Response).toInstance(response)
-        }
+    void configure() {
+        bind(Request).toInstance(request)
+        bind(Response).toInstance(response)
     }
 }
