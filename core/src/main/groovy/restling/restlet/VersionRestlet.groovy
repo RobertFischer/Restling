@@ -23,7 +23,7 @@ class VersionRestlet extends Restlet {
         Version header, url
     }
 
-    @Status(412)
+    @Status(450)
     private static class HeaderUrlVersionMismatchException extends Exception {
         final String error
         final VersionData versions
@@ -35,31 +35,32 @@ class VersionRestlet extends Restlet {
         }
     }
 
-    @Status(412)
+    @Status(451)
     private static class NonsenseUrlVersionException extends Exception {
         final String error
         final String version
 
-        NonsenseUrlVersionException(String version, Exception e) {
-            super("The version given in the URL is nonsensical: $version", e)
+        NonsenseUrlVersionException(String version) {
+            super("The version given in the URL is nonsensical: $version")
             this.error = message
             this.version = version
         }
     }
 
-    @Status(412)
+    @Status(452)
     private static class NonsenseHeaderVersionException extends Exception {
         final String error
         final String version
 
-        NonsenseHeaderVersionException(String version, Exception e) {
-            super("The version given in the header is nonsensical: $version", e)
+        NonsenseHeaderVersionException(String version) {
+            super("The version given in the header is nonsensical: $version")
             this.error = message
             this.version = version
         }
     }
 
 
+    static final String VERSION_URL_ATTRIBUTE_NAME = "url_version"
     static final String VERSION_HEADER_NAME = "API-VERSION"
     static final String VERSION_ATTRIBUTE_NAME = "restling.api.version"
     static final Version DEFAULT_VERSION = Version.forIntegers(0)
@@ -128,7 +129,8 @@ class VersionRestlet extends Restlet {
         try {
             return Version.valueOf(rawVersion)
         } catch (Exception e) {
-            throw new NonsenseHeaderVersionException(rawVersion, e)
+            log.debug("Erroneous raw version in header: $rawVersion", e)
+            throw new NonsenseHeaderVersionException(rawVersion)
         }
     }
 
@@ -140,17 +142,22 @@ class VersionRestlet extends Restlet {
      */
     static Version resolveUrlVersion(Request request) {
         assert request: "Request was null"
-        String rawVersion = request.attributes.get(VERSION_ATTRIBUTE_NAME, null)
+        String rawVersion = request.attributes.get(VERSION_URL_ATTRIBUTE_NAME, null)
         if (!rawVersion) {
-            log.debug("No URL attribute named $VERSION_ATTRIBUTE_NAME was found")
+            log.debug("No URL attribute named $VERSION_URL_ATTRIBUTE_NAME was found")
             return null
         } else {
-            log.trace("Raw version from the $VERSION_ATTRIBUTE_NAME attribute of the URL is: $rawVersion")
+            log.trace("Raw version from the $VERSION_URL_ATTRIBUTE_NAME attribute of the URL is: $rawVersion")
         }
         try {
-            return Version.valueOf(rawVersion)
+            if (rawVersion.contains(".")) {
+                return Version.valueOf(rawVersion)
+            } else {
+                return Version.forIntegers(Integer.parseInt(rawVersion))
+            }
         } catch (Exception e) {
-            throw new NonsenseUrlVersionException(rawVersion, e)
+            log.debug("Erroneous raw version in url: $rawVersion", e)
+            throw new NonsenseUrlVersionException(rawVersion)
         }
     }
 }

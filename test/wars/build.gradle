@@ -1,14 +1,15 @@
 subprojects { subproject ->
 
-  System.out.println("Applying template configuration for $subproject.name")
+    System.out.println("Applying template configuration for $subproject.name")
 
-  subproject.apply plugin:'war'
+    subproject.apply plugin: 'war'
 
-  subproject.group = "restling.test.wars"
+    subproject.group = "restling.test.wars"
 
-  subproject.dependencies {
-    compile project(":restling-core")
-  }
+    subproject.dependencies {
+        compile project(":restling-core")
+        compile "org.slf4j:slf4j-simple:[1.7.12,1.8)"
+    }
 
 }
 
