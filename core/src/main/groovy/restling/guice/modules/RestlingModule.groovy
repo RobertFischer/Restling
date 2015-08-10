@@ -19,9 +19,9 @@ class RestlingModule extends AbstractModule {
     final Class<? extends RestlingApplicationModule> applicationModule
 
     RestlingModule(Context context, Class<? extends RestlingApplicationModule> applicationModule) {
-        assert context: "Please provide a context for ${this.class}"
+        assert context != null: "Please provide a context for ${this.class}"
         this.context = context
-        assert applicationModule: "Please specify an application module class for ${this.class}"
+        assert applicationModule != null: "Please specify an application module class for ${this.class}"
         this.applicationModule = applicationModule
     }
 

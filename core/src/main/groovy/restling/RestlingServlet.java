@@ -3,7 +3,10 @@ package restling;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import org.restlet.Context;
 import org.restlet.ext.servlet.ServletAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import restling.guice.modules.RestlingApplicationModule;
 import restling.guice.modules.RestlingModule;
 import restling.restlet.MediaTypePreferenceFilter;
@@ -25,6 +28,8 @@ import java.util.*;
  */
 public class RestlingServlet extends javax.servlet.http.HttpServlet {
 
+  private static final Logger log = LoggerFactory.getLogger(RestlingServlet.class);
+
   private ServletAdapter adapter;
 
   /**
@@ -37,16 +42,34 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     super.init(config);
+    Context ctx;
 
     // Construct the servlet adapter that we are going to use
     this.adapter = new ServletAdapter(getServletContext());
+    ctx = this.adapter.getContext();
+    assert ctx != null : "Adapter Context is null, violating the Restlet API and the entire purpose of the ServletAdapter";
 
     // Construct a filter to make JSON our preferred mode of communication
-    MediaTypePreferenceFilter preferencesFilter = new MediaTypePreferenceFilter(this.adapter.getContext());
+    MediaTypePreferenceFilter preferencesFilter = new MediaTypePreferenceFilter(ctx);
     this.adapter.setNext(preferencesFilter);
+    ctx = preferencesFilter.getContext();
+
+    // Construct the application parameters
+    if (ctx == null) {
+      throw new ServletException("Null Restlet context; cannot construct Restling application");
+    } else {
+      log.info("Context=" + ctx.getClass() + " => " + ctx);
+    }
+
+    Class<? extends RestlingApplicationModule> applicationModuleClass = getApplicationModuleClass(getServletConfig());
+    if (applicationModuleClass == null) {
+      throw new ServletException("Null application module class; cannot construct Restling application");
+    } else {
+      log.info("ApplicationModuleClass=" + applicationModuleClass);
+    }
 
     // Construct the application
-    Module restlingModule = new RestlingModule(preferencesFilter.getContext(), getApplicationModuleClass(getServletConfig()));
+    Module restlingModule = new RestlingModule(ctx, applicationModuleClass);
     Injector injector = Guice.createInjector(restlingModule);
     Module applicationModule = injector.getInstance(RestlingApplicationModule.class);
     injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection tests
@@ -75,7 +98,7 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
   /**
    * Responsible for providing the application's Guice {@link Module}. This module is
    * responsible for producing.
-   * <p>
+   * <p/>
    * By default, the implementation looks for the {@code guice-module} init parameter on the
    * {@link ServletConfig}, and instantiates that class through {@link Class#newInstance()}
    * after looking it up using the classloader from {@link ServletContext#getClassLoader()}.
