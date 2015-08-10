@@ -4,6 +4,18 @@ allprojects {
   group = 'restling'
   assert restlingVersion: "Please provide a version for Restling (this project)"
   version = restlingVersion
+
+  afterEvaluate {
+    if(idea.project) {
+      idea.project.ipr {
+          withXml { provider ->
+              provider.node.component
+                      .find { it.@name == 'VcsDirectoryMappings' }
+                      .mapping.@vcs = 'Git'
+          }
+      }
+    }
+  }
 }
 
 subprojects {
@@ -51,8 +63,21 @@ subprojects {
     testCompile 'org.eclipse.jetty:jetty-webapp:[9.3,10)'
     testCompile 'junit:junit:[4.12,5)'
     testCompile "org.slf4j:slf4j-simple:[1.7.12,1.8)"
+
+    /*
+    * Spock
+    */
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    // optional dependencies for using Spock
+    testCompile "org.hamcrest:hamcrest-core:[1.3,2)" // only necessary if Hamcrest matchers are used
+    testRuntime "cglib:cglib-nodep:[3.1,4)"          // allows mocking of classes (in addition to interfaces)
+    testRuntime "org.objenesis:objenesis:[2.1,3)"
+    // allows mocking of classes without default constructor (together with CGLIB)
+
   }
 
-
+  configurations {
+      [runtime, testRuntime]*.exclude group: "org.slf4j", module: "slf4j-nop"
+      runtime.exclude group: "org.slf4j", module: "slf4j-simple"
+  }
 }
-
