@@ -12,4 +12,11 @@ class ContextSpec extends Specification {
         expect:
         assert new Context(): "No context present!"
     }
+
+    def "fresh context responds to asBoolean"() {
+        expect:
+        new Context().asBoolean()
+    }
+
+
 }
