@@ -1,5 +1,6 @@
 package restling.guice.modules
 
+import com.github.zafarkhaja.semver.Version
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
@@ -26,9 +27,14 @@ class RequestModule extends AbstractModule {
     @Inject
     Injector parentInjector
 
+    @Inject
+    Version apiVersion
+
     /**
-     * Perform the context configuration for this request. By default, this method does nothing.
+     * Perform the context configuration for this request. By default, does nothing.
      */
     @Override
-    void configure() {}
+    void configure() {
+    }
+
 }
