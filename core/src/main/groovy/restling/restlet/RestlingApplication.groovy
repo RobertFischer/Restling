@@ -40,6 +40,8 @@ class RestlingApplication extends Application {
         assert inboundRootProvider: "please provide an inboundRootProvider"
         def router = inboundRootProvider.get()
         assert router: "the inbound root provider returned null"
+        assert context: "No context currently provided!"
+        router.context = context // This prevents us from having to add @Inject boilerplate
         router.init()
 
         // Preface the inbound root with the version router
