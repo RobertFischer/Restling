@@ -10,6 +10,8 @@ import org.restlet.Response
 import org.restlet.Restlet
 import org.restlet.resource.Status
 
+import java.util.regex.Pattern
+
 /**
  * Responsible for resolving the version information and assigning it into the {@code restling.api.version}
  * attribute of the {@link Request}.
@@ -127,10 +129,24 @@ class VersionRestlet extends Restlet {
             log.trace("Raw version from $VERSION_HEADER_NAME header is: $rawVersion")
         }
         try {
-            return Version.valueOf(rawVersion)
+            return parseVersion(rawVersion)
         } catch (Exception e) {
             log.debug("Erroneous raw version in header: $rawVersion", e)
             throw new NonsenseHeaderVersionException(rawVersion)
+        }
+    }
+
+    static final Pattern MAJOR_ONLY = ~/^\d+$/;
+    static final Pattern MAJOR_MINOR_ONLY = ~/^\d+\.\d+$/;
+
+    static Version parseVersion(String rawVersion) {
+        if (MAJOR_ONLY.matcher(rawVersion).matches()) {
+            return Version.forIntegers(Integer.parseInt(rawVersion))
+        } else if (MAJOR_MINOR_ONLY.matcher(rawVersion).matches()) {
+            int[] split = rawVersion.split('.').collect({ Integer.parseInt(it as String) })
+            return Version.forIntegers(split[0], split[1])
+        } else {
+            Version.valueOf(rawVersion)
         }
     }
 
@@ -150,11 +166,7 @@ class VersionRestlet extends Restlet {
             log.trace("Raw version from the $VERSION_URL_ATTRIBUTE_NAME attribute of the URL is: $rawVersion")
         }
         try {
-            if (rawVersion.contains(".")) {
-                return Version.valueOf(rawVersion)
-            } else {
-                return Version.forIntegers(Integer.parseInt(rawVersion))
-            }
+            return parseVersion(rawVersion)
         } catch (Exception e) {
             log.debug("Erroneous raw version in url: $rawVersion", e)
             throw new NonsenseUrlVersionException(rawVersion)
