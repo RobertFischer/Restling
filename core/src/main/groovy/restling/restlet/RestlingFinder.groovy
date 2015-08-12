@@ -36,7 +36,11 @@ class RestlingFinder extends Finder {
      */
     @Override
     ServerResource find(Request request, Response response) {
-        Injector requestInjector = injector.createChildInjector(new RequestResponseModule(request, response))
+        def requestResponseModule = injector.getInstance(RequestResponseModule)
+        requestResponseModule.request = request
+        requestResponseModule.response = response
+
+        Injector requestInjector = injector.createChildInjector(requestResponseModule)
         requestInjector = requestInjector.createChildInjector(requestInjector.getInstance(RequestModule))
         return requestInjector.getInstance(targetClass)
     }
