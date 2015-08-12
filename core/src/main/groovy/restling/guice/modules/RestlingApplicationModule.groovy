@@ -1,8 +1,11 @@
 package restling.guice.modules
 
+import com.github.zafarkhaja.semver.Version
 import com.google.inject.AbstractModule
 import com.google.inject.Binder
+import com.google.inject.Key
 import com.google.inject.Singleton
+import com.google.inject.name.Names
 import groovy.transform.CompileStatic
 import restling.restlet.RestlingApplication
 import restling.restlet.RestlingRouter
@@ -36,6 +39,8 @@ abstract class RestlingApplicationModule extends AbstractModule {
         if (requestModuleClass != RequestModule) {
             bind(RequestModule).to(requestModuleClass)
         }
+
+        bind(Key.get(Version, Names.named("default"))).toInstance(defaultVersion)
 
         configureCustomBindings()
     }
@@ -73,5 +78,7 @@ abstract class RestlingApplicationModule extends AbstractModule {
     Class<? extends RequestModule> getRequestModuleClass() {
         return RequestModule
     }
+
+    Version defaultVersion = Version.forIntegers(1);
 
 }
