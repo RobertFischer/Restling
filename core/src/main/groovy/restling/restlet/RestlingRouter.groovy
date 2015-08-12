@@ -17,7 +17,19 @@ abstract class RestlingRouter extends Router {
     @Inject
     Injector injector
 
-    @Inject
+    /**
+     * Default constructor. Equivalent to calling @{link RestlingRouter#RestlingRouter(Context)} and passing in
+     * {@code null}.
+     */
+    RestlingRouter() {
+        this(null);
+    }
+
+    /**
+     * Constructor for if you have a context you want to pass in.
+     *
+     * @param context The context to install; may be {@code null}
+     */
     RestlingRouter(Context context) {
         super(context)
     }
@@ -36,12 +48,14 @@ abstract class RestlingRouter extends Router {
     @Override
     Finder createFinder(Class<? extends ServerResource> resourceClass) {
         assert injector: "Need an injector to create the finder!"
+        assert context: "Need a context to create the finder!"
         return new RestlingFinder(context, resourceClass, injector)
     }
 
     /**
      * This is the hook for performing initialization (such as calling {@code .attach})
-     * for this router.
+     * for this router. {@link #setContext(Context)} will be called with a non-null context
+     * before this method is called.
      */
     abstract void init() throws Exception;
 
