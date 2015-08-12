@@ -18,7 +18,7 @@ allprojects {
   }
 }
 
-subprojects {
+subprojects { subproject ->
   apply plugin: 'java'
   apply plugin: 'groovy'
   apply plugin: 'maven'
@@ -80,4 +80,9 @@ subprojects {
       [runtime, testRuntime]*.exclude group: "org.slf4j", module: "slf4j-nop"
       runtime.exclude group: "org.slf4j", module: "slf4j-simple"
   }
+
+  ["compileJava","compileGroovy"].each { "$it" {
+    options.compilerArgs << "-Xlint:all" // More warnings, please!
+  } }
+
 }
