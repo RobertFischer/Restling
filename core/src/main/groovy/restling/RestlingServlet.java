@@ -98,8 +98,9 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
 
   /**
    * Responsible for providing the application's Guice {@link Module}. This module is
-   * responsible for producing.
-   * <p/>
+   * responsible for producing all the things that the application needs to run, and is additionally
+   * the source of the application-specific configuration.
+   * <p>
    * By default, the implementation looks for the {@code guice-module} init parameter on the
    * {@link ServletConfig}, and instantiates that class through {@link Class#newInstance()}
    * after looking it up using the classloader from {@link ServletContext#getClassLoader()}.
