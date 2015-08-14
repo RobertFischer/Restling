@@ -3,6 +3,7 @@ package restling;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Stage;
 import org.restlet.Context;
 import org.restlet.ext.servlet.ServletAdapter;
 import org.slf4j.Logger;
@@ -70,9 +71,9 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
 
     // Construct the application
     Module restlingModule = new RestlingModule(ctx, applicationModuleClass);
-    Injector injector = Guice.createInjector(restlingModule);
+    Injector injector = Guice.createInjector(Stage.DEVELOPMENT, restlingModule);
     Module applicationModule = injector.getInstance(RestlingApplicationModule.class);
-    injector = Guice.createInjector(restlingModule, applicationModule); // Child injector broke basic-injection tests
+    injector = Guice.createInjector(Stage.PRODUCTION, restlingModule, applicationModule); // Child injector broke basic-injection tests
     RestlingApplication application = injector.getInstance(RestlingApplication.class);
     preferencesFilter.setNext(application);
   }
@@ -98,7 +99,7 @@ public class RestlingServlet extends javax.servlet.http.HttpServlet {
   /**
    * Responsible for providing the application's Guice {@link Module}. This module is
    * responsible for producing.
-   * <p>
+   * <p/>
    * By default, the implementation looks for the {@code guice-module} init parameter on the
    * {@link ServletConfig}, and instantiates that class through {@link Class#newInstance()}
    * after looking it up using the classloader from {@link ServletContext#getClassLoader()}.
