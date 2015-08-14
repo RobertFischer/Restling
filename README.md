@@ -104,4 +104,4 @@ in each directory for details. The `basic-injection` example war is a good examp
 FAQ
 -------
 
-  * *What if I want to have multiple modules?* <br />Have your application module call `binder.install(module)` ([API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
+  * *What if I want to have multiple modules?* <br />Have your `RestlingApplicationModule` call `install(module)` as part of its configuration. (For more, see the [`Binder` API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
