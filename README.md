@@ -18,6 +18,8 @@ Advantages
   * You get to use Guice's type-safe dependency injection (with its awesome error handling) for your all your `ServerResource` instances.
   * You get to use Groovy's wonderfully succinct syntax for coding up those `ServerResource` instances.
   * You get versioning for your API for free
+  * Useful utility methods missing from Restlet, such as:
+    * `RestlingRouter#attachSubRouter` for attaching routers that handle entire path sections.
   * Various sane configurations are now the defaults, such as:
     * A strong preference for JSON. If there is no other specific type requested, respond with JSON.
     * Use file extensions (eg: `.json`, `.xml`) to determine what file type is desired.
