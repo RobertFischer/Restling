@@ -55,7 +55,9 @@ abstract class RestlingRouter extends Router {
     }
 
     /**
-     * Attaches a subrouter who is delegated to based on {@code pathPrefix}.
+     * Attaches a subrouter who is delegated to based on {@code pathPrefix}. If {@code subrouter}
+     * is a {@code RestlingRouter}, then we will call {@link RestlingRouter#init()} on it before
+     * we attach it.
      *
      * @param pathPrefix The path prefix that the subrouter will own.
      * @param subrouter The router to handle calls into that path prefix.
