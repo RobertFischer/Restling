@@ -115,3 +115,4 @@ Change Log
 * *0.0.7*
   * Changed subrouters to be generated on demand, so they can participate in the request context for Guice, and so that they are only generated when needed.
   * Added `RestlingRouter#attach(String,Class<ServerResource>,Class<Filter>...)` as a convenience for attaching a series of filters before a `ServerResource`.
+  * Created a utility class for creating a Guice injector for a request. The result is cached on the request, so the same context is used throughout the same request.
