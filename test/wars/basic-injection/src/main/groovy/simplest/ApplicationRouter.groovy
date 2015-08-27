@@ -1,4 +1,4 @@
-package simplest
+package attachFilters
 
 import com.google.inject.Inject
 import groovy.transform.CompileStatic

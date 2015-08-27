@@ -2,7 +2,6 @@ package restling.guice.modules
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.inject.AbstractModule
-import com.google.inject.Singleton
 import groovy.transform.CompileStatic
 import org.restlet.Context
 import org.restlet.ext.jackson.JacksonConverter
@@ -28,7 +27,7 @@ class RestlingModule extends AbstractModule {
     @Override
     void configure() {
         bind(Context).toInstance(context)
-        bind(RestlingApplicationModule).to(applicationModule).in(Singleton)
+        bind(RestlingApplicationModule).to(applicationModule).asEagerSingleton()
         bind(ObjectMapper).toProvider(ObjectMapperProvider)
         bind(JacksonConverter).toProvider(JacksonConverterProvider)
     }

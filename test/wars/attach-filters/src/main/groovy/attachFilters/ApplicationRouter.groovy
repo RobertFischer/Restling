@@ -6,16 +6,16 @@ import org.restlet.Context
 import restling.restlet.RestlingRouter
 
 @CompileStatic
-class SimplestRouter extends RestlingRouter {
+class ApplicationRouter extends RestlingRouter {
 
     @Inject
-    SimplestRouter(Context context) {
+    ApplicationRouter(Context context) {
         super(context)
     }
 
     @Override
     void init() {
-        attach("/foos/", FoosResource)
+        attach("/foos/", FoosResource, FirstFilter, SecondFilter)
     }
 
 }

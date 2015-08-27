@@ -20,6 +20,7 @@ Advantages
   * You get versioning for your API for free
   * Useful utility methods missing from Restlet, such as:
     * `RestlingRouter#attachSubRouter` for attaching routers that handle entire path sections.
+    * `RestlingRouter#attach(String,Class<ServerResource>,Class<Filter>...)` for attaching a series of filters before a `ServerResource`.
   * Various sane configurations are now the defaults, such as:
     * A strong preference for JSON. If there is no other specific type requested, respond with JSON.
     * Use file extensions (eg: `.json`, `.xml`) to determine what file type is desired.
@@ -107,3 +108,10 @@ FAQ
 -------
 
   * *What if I want to have multiple modules?* <br />Have your `RestlingApplicationModule` call `install(module)` as part of its configuration. (For more, see the [`Binder` API docs](http://google.github.io/guice/api-docs/latest/javadoc/com/google/inject/Binder.html#install-com.google.inject.Module-)).
+
+Change Log
+-------------
+
+* *0.0.7*
+  * Changed subrouters to be generated on demand, so they can participate in the request context for Guice, and so that they are only generated when needed.
+  * Added `RestlingRouter#attach(String,Class<ServerResource>,Class<Filter>...)` as a convenience for attaching a series of filters before a `ServerResource`.

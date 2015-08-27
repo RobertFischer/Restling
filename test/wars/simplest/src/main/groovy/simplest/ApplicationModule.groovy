@@ -1,6 +1,5 @@
-package simplest
+package attachFilters
 
-import com.google.inject.Binder
 import groovy.transform.CompileStatic
 import restling.guice.modules.RestlingApplicationModule
 

@@ -7,7 +7,7 @@
         <servlet-class>restling.RestlingServlet</servlet-class>
         <init-param>
             <param-name>guice-module</param-name>
-            <param-value>simplest.ApplicationModule</param-value>
+            <param-value>attachFilters.ApplicationModule</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
